@@ -112,16 +112,11 @@ macro(SET_EXAMPLE_EXECUTABLE_TARGET_PROPERTIES target)
   endif()
 endmacro()
 
-
 #
 # Target configuration.
 #
-
 # Static library shared by all example executable targets.
 add_subdirectory(shared)
 
 # Example executable targets.
-add_subdirectory(message_router)
 add_subdirectory(minimal)
-add_subdirectory(resource_manager)
-add_subdirectory(scheme_handler)

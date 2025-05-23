@@ -10,7 +10,7 @@ namespace minimal {
 
 namespace {
 
-const char kStartupURL[] = "https://www.google.com";
+const char kStartupURL[] = "https://qr-menu.tn/";
 
 }  // namespace
 
