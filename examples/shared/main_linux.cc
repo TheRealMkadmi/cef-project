@@ -5,8 +5,11 @@
 #include "examples/shared/main.h"
 
 #include <X11/Xlib.h>
+#include <filesystem>
+#include <cstdlib>
 
 #include "include/base/cef_logging.h"
+#include "include/cef_cookie.h"
 
 #include "examples/shared/app_factory.h"
 #include "examples/shared/client_manager.h"
@@ -71,18 +74,46 @@ int main(int argc, char* argv[]) {
 
   // Create the singleton manager instance.
   ClientManager manager;
-
   // Specify CEF global settings here.
   CefSettings settings;
+
+  // TODO: Implement cookie persistence for Linux
+  // Set up cache directory for cookie persistence
+  std::filesystem::path cache_dir;
+  const char* home = getenv("HOME");
+  if (home) {
+    cache_dir = std::filesystem::path(home) / ".local" / "share" / "MyCefApp" / "Cache";
+  } else {
+    cache_dir = "/tmp/MyCefApp/Cache";
+  }
+  
+  // Create cache directory if it doesn't exist
+  try {
+    std::filesystem::create_directories(cache_dir);
+  } catch (const std::exception& e) {
+    // If creation fails, fall back to temp directory
+    cache_dir = "/tmp/MyCefApp/Cache";
+    std::filesystem::create_directories(cache_dir);
+  }
+  
+  // Configure CEF settings for cookie persistence
+  CefString(&settings.cache_path).FromString(cache_dir.string());
+  settings.persist_session_cookies = 1;
+  settings.persist_user_preferences = 1;
 
   // Initialize CEF for the browser process. The first browser instance will be
   // created in CefBrowserProcessHandler::OnContextInitialized() after CEF has
   // been initialized.
   CefInitialize(main_args, settings, app, nullptr);
-
   // Run the CEF message loop. This will block until CefQuitMessageLoop() is
   // called.
   CefRunMessageLoop();
+
+  // TODO: Flush cookie store to ensure all cookies are written to disk
+  CefRefPtr<CefCookieManager> cookie_manager = CefCookieManager::GetGlobalManager(nullptr);
+  if (cookie_manager) {
+    cookie_manager->FlushStore(nullptr);
+  }
 
   // Shut down CEF.
   CefShutdown();
