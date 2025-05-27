@@ -82,4 +82,14 @@ bool ClientManager::IsClosing() const {
   return is_closing_;
 }
 
+void ClientManager::ForEachBrowser(std::function<void(CefRefPtr<CefBrowser>)> callback) const {
+  DCHECK(thread_checker_.CalledOnValidThread());
+  
+  for (const auto& browser : browser_list_) {
+    if (browser && callback) {
+      callback(browser);
+    }
+  }
+}
+
 }  // namespace shared

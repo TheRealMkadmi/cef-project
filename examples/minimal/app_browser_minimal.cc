@@ -5,6 +5,8 @@
 #include "examples/minimal/client_minimal.h"
 #include "examples/shared/app_factory.h"
 #include "examples/shared/browser_util.h"
+#include "examples/shared/client_util.h"
+#include "examples/shared/connection_monitor.h"
 
 namespace minimal {
 
@@ -39,6 +41,22 @@ class BrowserApp : public CefApp, public CefBrowserProcessHandler {
 
   // CefBrowserProcessHandler methods:
   void OnContextInitialized() override {
+    // Initialize connection monitoring
+    shared::ConnectionMonitor* monitor =
+        shared::ConnectionMonitor::GetInstance();
+    // Set the callback for UI updates
+    monitor->SetStatusChangeCallback(
+        [](const shared::ConnectionMonitor::Status& status) {
+          // This callback is now guaranteed to be called on the UI thread by
+          // ConnectionMonitor
+          shared::UpdateAllBrowserTitles();
+        });
+    monitor->StartMonitoring("https://qr-menu.tn/", 5);  // Check every 5 seconds
+
+    // Initial title update might still be useful if StartMonitoring is async
+    // or if the first check takes time.
+    // shared::UpdateAllBrowserTitles(); // Consider if this is needed or if the first callback suffices
+
     // Create the browser window.
     shared::CreateBrowser(new Client(), kStartupURL, CefBrowserSettings());
   }

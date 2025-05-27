@@ -22,6 +22,8 @@ set(SHARED_SRCS
   client_util.h
   browser_util.cc
   browser_util.h
+  connection_monitor.cc
+  connection_monitor.h
   main.h
   resource_util.cc
   resource_util.h

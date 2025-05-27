@@ -15,6 +15,9 @@ namespace shared {
 // Called from CefDisplayHandler methods:
 void OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title);
 
+// Force a title update for all browsers (useful when connection status changes)
+void UpdateAllBrowserTitles();
+
 // Called from CefLifeSpanHandler methods:
 void OnAfterCreated(CefRefPtr<CefBrowser> browser);
 bool DoClose(CefRefPtr<CefBrowser> browser);

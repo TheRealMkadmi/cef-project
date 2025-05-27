@@ -5,6 +5,7 @@
 #ifndef CEF_EXAMPLES_SHARED_CLIENT_MANAGER_H_
 #define CEF_EXAMPLES_SHARED_CLIENT_MANAGER_H_
 
+#include <functional>
 #include <list>
 
 #include "include/base/cef_thread_checker.h"
@@ -32,6 +33,9 @@ class ClientManager {
 
   // Returns true if the last browser instance is closing.
   bool IsClosing() const;
+
+  // Get all current browsers for title updates
+  void ForEachBrowser(std::function<void(CefRefPtr<CefBrowser>)> callback) const;
 
  private:
   base::ThreadChecker thread_checker_;
